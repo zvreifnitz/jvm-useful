@@ -1,3 +1,10 @@
+# target dir
+target/
+
+# idea stuff
+*idea*/
+*.iml
+
 # Compiled class file
 *.class
 
