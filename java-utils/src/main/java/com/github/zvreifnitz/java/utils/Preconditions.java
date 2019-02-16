@@ -19,10 +19,22 @@ package com.github.zvreifnitz.java.utils;
 
 public final class Preconditions {
 
-  public static <T> T nullCheck(final T instance, final String instanceName) {
-    if (instance == null) {
-      throw new NullPointerException(instanceName);
+  public static <T> T checkNotNull(final T instance, final String paramName) {
+    return (instance != null)
+        ? instance
+        : Exceptions.throwExc(new NullPointerException(paramName));
+  }
+
+  public static <T extends Number> T checkPositive(final T input, final String paramName) {
+    return (checkNotNull(input, paramName).doubleValue() > 0.0)
+        ? input
+        : Exceptions.throwExc(
+            new IllegalArgumentException("Parameter '" + paramName + "' must be positive"));
+  }
+
+  public static void checkState(final boolean condition, final String msg) {
+    if (!condition) {
+      throw new IllegalStateException(msg);
     }
-    return instance;
   }
 }

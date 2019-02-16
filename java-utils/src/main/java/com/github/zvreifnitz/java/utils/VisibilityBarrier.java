@@ -15,4 +15,21 @@
  *
  */
 
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.9")
+package com.github.zvreifnitz.java.utils;
+
+public final class VisibilityBarrier {
+
+  public static <T> T makeVisible(final T input) {
+    final FinalBarrier<T> barrier = new FinalBarrier<>(input);
+    return barrier.visibleInstance;
+  }
+
+  private final static class FinalBarrier<I> {
+
+    private final I visibleInstance;
+
+    private FinalBarrier(final I instance) {
+      this.visibleInstance = instance;
+    }
+  }
+}

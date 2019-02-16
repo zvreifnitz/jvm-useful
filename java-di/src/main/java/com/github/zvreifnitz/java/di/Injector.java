@@ -15,4 +15,13 @@
  *
  */
 
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.9")
+package com.github.zvreifnitz.java.di;
+
+import java.lang.annotation.Annotation;
+
+public interface Injector {
+
+  <T> T getInstance(final Class<T> clazz);
+
+  <T> T getInstance(final Class<T> clazz, final Class<? extends Annotation> annotation);
+}

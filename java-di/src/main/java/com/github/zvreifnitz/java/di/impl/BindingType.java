@@ -15,4 +15,30 @@
  *
  */
 
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.9")
+package com.github.zvreifnitz.java.di.impl;
+
+public enum BindingType {
+  Free(false),
+  FreeEager(true),
+  FreeSingleton(true),
+  Bound(false),
+  BoundEager(true),
+  BoundSingleton(true),
+  BoundInstance(true),
+  Provider(false),
+  ProviderEager(true),
+  ProviderSingleton(true),
+  ProviderInstance(false),
+  ProviderInstanceEager(true),
+  ProviderInstanceSingleton(true);
+
+  private final boolean singleton;
+
+  BindingType(final boolean singleton) {
+    this.singleton = singleton;
+  }
+
+  public boolean isSingleton() {
+    return singleton;
+  }
+}

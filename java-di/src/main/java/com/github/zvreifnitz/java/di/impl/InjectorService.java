@@ -15,4 +15,13 @@
  *
  */
 
-addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.9")
+package com.github.zvreifnitz.java.di.impl;
+
+import com.github.zvreifnitz.java.di.InjectionModule;
+import com.github.zvreifnitz.java.di.Injector;
+import java.util.Set;
+
+public interface InjectorService {
+
+  Injector createInjector(final Set<InjectionModule> modules);
+}
