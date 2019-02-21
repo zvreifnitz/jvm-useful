@@ -1,82 +1,60 @@
-/*
- * (C) Copyright 2019 zvreifnitz
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
+import BuildHelper._
+import CustomKeys._
 
-logLevel := sbt.util.Level.Info
+logLevel in Global := sbt.util.Level.Info
+publishMavenStyle in Global := true
+organization in Global := "com.github.zvreifnitz"
+scalaVersion in Global := "2.12.8"
+version in Global := "1.0.0-SNAPSHOT"
+compileOrder in Global := sbt.CompileOrder.JavaThenScala
+rootSrcDir in Global := "."
+organizationName in Global := "zvreifnitz"
+startYear in Global := Some(2019)
+licenses in Global += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt"))
 
 lazy val commonSettings = Seq(
-  publishMavenStyle := true,
-  organization := "com.github.zvreifnitz",
-  scalaVersion := "2.12.8",
-  version := "1.0.0-SNAPSHOT",
   test in assembly := {}
 )
 
 lazy val scalaSettings = commonSettings ++ Seq(
   crossPaths := true,
-  autoScalaLibrary := true,
-  compileOrder := sbt.CompileOrder.JavaThenScala
+  autoScalaLibrary := true
 )
 
 lazy val javaSettings = commonSettings ++ Seq(
   crossPaths := false,
-  autoScalaLibrary := false,
-  compileOrder := sbt.CompileOrder.ScalaThenJava
+  autoScalaLibrary := false
 )
 
-lazy val root = (project in file("."))
+lazy val all = makeProject("all")
   .aggregate(javaUtils, scalaUtils, javaDi, javaDiGuice, javaDeps)
 
-lazy val javaUtils = (project in file("java-utils"))
-  .withId("java-utils")
-  .settings(
-    javaSettings,
-    name := "java-utils"
-  )
+lazy val javaUtils = makeProject("java-utils")
+  .enablePlugins(JavaAppPackaging)
+  .settings(javaSettings)
 
-lazy val scalaUtils = (project in file("scala-utils"))
-  .withId("scala-utils")
+lazy val scalaUtils = makeProject("scala-utils")
+  .enablePlugins(JavaAppPackaging)
   .dependsOn(javaUtils)
-  .settings(
-    scalaSettings,
-    name := "scala-utils"
-  )
+  .settings(scalaSettings)
 
-lazy val javaDi = (project in file("java-di"))
-  .withId("java-di")
+lazy val javaDi = makeProject("java-di")
+  .enablePlugins(JavaAppPackaging)
   .dependsOn(javaUtils)
   .settings(
     javaSettings,
-    name := "java-di",
     libraryDependencies += "javax.inject" % "javax.inject" % "1"
   )
 
-lazy val javaDiGuice = (project in file("java-di-guice"))
-  .withId("java-di-guice")
+lazy val javaDiGuice = makeProject("java-di-guice")
+  .enablePlugins(JavaAppPackaging)
   .dependsOn(javaDi)
   .settings(
     javaSettings,
-    name := "java-di-guice",
     libraryDependencies += "com.google.inject" % "guice" % "4.2.2"
   )
 
-lazy val javaDeps = (project in file("java-deps"))
-  .withId("java-deps")
+lazy val javaDeps = makeProject("java-deps")
+  .enablePlugins(JavaAppPackaging)
   .dependsOn(javaUtils)
-  .settings(
-    javaSettings,
-    name := "java-deps"
-  )
+  .settings(javaSettings)

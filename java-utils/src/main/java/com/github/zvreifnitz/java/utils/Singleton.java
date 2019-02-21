@@ -1,5 +1,5 @@
 /*
- * (C) Copyright 2019 zvreifnitz
+ * Copyright 2019 zvreifnitz
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package com.github.zvreifnitz.java.utils;
@@ -35,10 +34,7 @@ public final class Singleton<T> implements Supplier<T> {
   @Override
   public final T get() {
     final T existingValue = this.value;
-    if (existingValue != null) {
-      return existingValue;
-    }
-    return this.getSync();
+    return (existingValue != null) ? existingValue : this.getSync();
   }
 
   public final void set(final T value) {
@@ -47,23 +43,23 @@ public final class Singleton<T> implements Supplier<T> {
 
   private synchronized T getSync() {
     final T existingValue = this.value;
-    if (existingValue != null) {
-      return existingValue;
-    }
-    final T createdValue = this.createInstance();
-    this.value = createdValue;
-    return createdValue;
+    return (existingValue != null) ? existingValue : this.createAndSetInstance();
   }
 
   private synchronized void setSync(final T value) {
-    this.value = (value == null)
-        ? this.createInstance()
-        : VisibilityBarrier.makeVisible(value);
+    final T createdValue = (value == null) ? this.createInstance() : value;
+    this.value = VisibilityBarrier.makeVisible(createdValue);
+  }
+
+  private T createAndSetInstance() {
+    final T createdValue = this.createInstance();
+    this.value = VisibilityBarrier.makeVisible(createdValue);
+    return createdValue;
   }
 
   private T createInstance() {
-    final Supplier<T> supplierLocal = Preconditions.checkNotNull(this.supplier, "Singleton.supplier");
-    final T instance = Preconditions.checkNotNull(supplierLocal.get(), "Singleton.supplier.get()");
-    return VisibilityBarrier.makeVisible(instance);
+    final Supplier<T> supplierLocal = Preconditions
+        .checkNotNull(this.supplier, "Singleton.supplier");
+    return Preconditions.checkNotNull(supplierLocal.get(), "Singleton.supplier.get()");
   }
 }
