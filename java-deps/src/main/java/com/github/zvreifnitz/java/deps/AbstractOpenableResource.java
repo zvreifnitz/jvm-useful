@@ -92,7 +92,7 @@ public abstract class AbstractOpenableResource<TResource> extends AbstractOpenab
   private TResource performCloseResourceInternal(final TResource resource) {
     this.performCloseResource(resource);
     this.performCloseBy(resource);
-    return null;
+    return resource;
   }
 
   protected void performInitResource(final TResource resource) {

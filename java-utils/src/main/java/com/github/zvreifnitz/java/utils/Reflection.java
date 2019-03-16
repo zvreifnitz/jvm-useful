@@ -29,6 +29,22 @@ import java.util.jar.JarInputStream;
 
 public final class Reflection {
 
+  public static <T> boolean isPrimitive(final Class<T> clazz) {
+    return ((clazz != null) && clazz.isPrimitive());
+  }
+
+  public static <T> boolean isBoxedPrimitive(final Class<T> clazz) {
+    return Boolean.class.equals(clazz)
+        || Byte.class.equals(clazz)
+        || Character.class.equals(clazz)
+        || Short.class.equals(clazz)
+        || Integer.class.equals(clazz)
+        || Long.class.equals(clazz)
+        || Float.class.equals(clazz)
+        || Double.class.equals(clazz)
+        || Void.class.equals(clazz);
+  }
+
   public static void hasOnlyParamlessCTOR(final Class<?> clazz) {
     final Constructor<?>[] ctors = clazz.getDeclaredConstructors();
     if ((ctors.length != 1) || (ctors[0].getParameterCount() != 0)) {
@@ -45,10 +61,14 @@ public final class Reflection {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public static <T, I> T cast(final Class<T> clazz, final I instance) {
     Preconditions.checkNotNull(clazz, "clazz");
     try {
-      return (instance == null) ? null : clazz.cast(instance);
+      return (instance == null) ? null
+          : Reflection.isPrimitive(clazz)
+              ? (T) instance
+              : clazz.cast(instance);
     } catch (final Exception exc) {
       return Exceptions.throwExcUnchecked(exc);
     }

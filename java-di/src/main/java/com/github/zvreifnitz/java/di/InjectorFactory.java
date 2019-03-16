@@ -23,7 +23,7 @@ import java.util.Set;
 
 public final class InjectorFactory {
 
-  private final static InjectorService InjectorService;
+  private final static InjectorService INJECTOR_SERVICE;
 
   static {
     final ServiceLoader<InjectorService> loader = ServiceLoader.load(InjectorService.class);
@@ -31,10 +31,10 @@ public final class InjectorFactory {
     if (!iterator.hasNext()) {
       throw new Error("No 'InjectorService' found");
     }
-    InjectorService = iterator.next();
+    INJECTOR_SERVICE = iterator.next();
   }
 
   public static Injector createInjector(final Set<InjectionModule> modules) {
-    return InjectorService.createInjector(modules);
+    return INJECTOR_SERVICE.createInjector(modules);
   }
 }

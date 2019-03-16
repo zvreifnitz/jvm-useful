@@ -21,6 +21,7 @@ import com.github.zvreifnitz.java.di.Injector;
 import com.github.zvreifnitz.java.di.impl.BindingKey;
 import com.github.zvreifnitz.java.di.impl.BindingValue;
 import com.github.zvreifnitz.java.di.impl.InjectorService;
+import com.github.zvreifnitz.java.utils.Exceptions;
 import com.github.zvreifnitz.java.utils.Preconditions;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binder;
@@ -34,7 +35,7 @@ import javax.inject.Singleton;
 public final class GuiceInjectorService implements InjectorService {
 
   @Override
-  public Injector createInjector(final Set<InjectionModule> modules) {
+  public final Injector createInjector(final Set<InjectionModule> modules) {
     final Map<BindingKey, BindingValue<?>> bindings = InjectionModule.collectBindings(modules);
     final GuiceInjectorModule module = new GuiceInjectorModule(bindings);
     return new GuiceInjector(module);
@@ -72,115 +73,152 @@ public final class GuiceInjectorService implements InjectorService {
           if (key.getAnnotation() == null) {
             binder.bind(key.getClazz());
           } else {
-            binder.bind(key.getClazz()).annotatedWith(key.getAnnotation());
+            binder.bind(key.getClazz())
+                .annotatedWith(key.getAnnotation());
           }
           break;
         }
         case FreeEager: {
           if (key.getAnnotation() == null) {
-            binder.bind(key.getClazz()).asEagerSingleton();
+            binder.bind(key.getClazz())
+                .asEagerSingleton();
           } else {
-            binder.bind(key.getClazz()).annotatedWith(key.getAnnotation()).asEagerSingleton();
+            binder.bind(key.getClazz())
+                .annotatedWith(key.getAnnotation())
+                .asEagerSingleton();
           }
           break;
         }
         case FreeSingleton: {
           if (key.getAnnotation() == null) {
-            binder.bind(key.getClazz()).in(Singleton.class);
+            binder.bind(key.getClazz())
+                .in(Singleton.class);
           } else {
-            binder.bind(key.getClazz()).annotatedWith(key.getAnnotation()).in(Singleton.class);
+            binder.bind(key.getClazz())
+                .annotatedWith(key.getAnnotation())
+                .in(Singleton.class);
           }
           break;
         }
         case Bound: {
           if (key.getAnnotation() == null) {
-            binder.bind(value.getClazz()).to(value.getImplClazz());
+            binder.bind(value.getClazz())
+                .to(value.getImplClazz());
           } else {
-            binder.bind(value.getClazz()).annotatedWith(key.getAnnotation())
+            binder.bind(value.getClazz())
+                .annotatedWith(key.getAnnotation())
                 .to(value.getImplClazz());
           }
           break;
         }
         case BoundEager: {
           if (key.getAnnotation() == null) {
-            binder.bind(value.getClazz()).to(value.getImplClazz()).asEagerSingleton();
+            binder.bind(value.getClazz())
+                .to(value.getImplClazz())
+                .asEagerSingleton();
           } else {
-            binder.bind(value.getClazz()).annotatedWith(key.getAnnotation())
-                .to(value.getImplClazz()).asEagerSingleton();
+            binder.bind(value.getClazz())
+                .annotatedWith(key.getAnnotation())
+                .to(value.getImplClazz())
+                .asEagerSingleton();
           }
           break;
         }
         case BoundSingleton: {
           if (key.getAnnotation() == null) {
-            binder.bind(value.getClazz()).to(value.getImplClazz()).in(Singleton.class);
+            binder.bind(value.getClazz())
+                .to(value.getImplClazz())
+                .in(Singleton.class);
           } else {
-            binder.bind(value.getClazz()).annotatedWith(key.getAnnotation())
-                .to(value.getImplClazz()).in(Singleton.class);
+            binder.bind(value.getClazz())
+                .annotatedWith(key.getAnnotation())
+                .to(value.getImplClazz())
+                .in(Singleton.class);
           }
           break;
         }
         case BoundInstance: {
           if (key.getAnnotation() == null) {
-            binder.bind(value.getClazz()).toInstance(value.getImplInstance());
+            binder.bind(value.getClazz())
+                .toInstance(value.getImplInstance());
           } else {
-            binder.bind(value.getClazz()).annotatedWith(key.getAnnotation())
+            binder.bind(value.getClazz())
+                .annotatedWith(key.getAnnotation())
                 .toInstance(value.getImplInstance());
           }
           break;
         }
         case Provider: {
           if (key.getAnnotation() == null) {
-            binder.bind(value.getClazz()).toProvider(value.getProviderClazz());
+            binder.bind(value.getClazz())
+                .toProvider(value.getProviderClazz());
           } else {
-            binder.bind(value.getClazz()).annotatedWith(key.getAnnotation())
+            binder.bind(value.getClazz())
+                .annotatedWith(key.getAnnotation())
                 .toProvider(value.getProviderClazz());
           }
           break;
         }
         case ProviderEager: {
           if (key.getAnnotation() == null) {
-            binder.bind(value.getClazz()).toProvider(value.getProviderClazz()).asEagerSingleton();
+            binder.bind(value.getClazz())
+                .toProvider(value.getProviderClazz())
+                .asEagerSingleton();
           } else {
-            binder.bind(value.getClazz()).annotatedWith(key.getAnnotation())
-                .toProvider(value.getProviderClazz()).asEagerSingleton();
+            binder.bind(value.getClazz())
+                .annotatedWith(key.getAnnotation())
+                .toProvider(value.getProviderClazz())
+                .asEagerSingleton();
           }
           break;
         }
         case ProviderSingleton: {
           if (key.getAnnotation() == null) {
-            binder.bind(value.getClazz()).toProvider(value.getProviderClazz()).in(Singleton.class);
+            binder.bind(value.getClazz())
+                .toProvider(value.getProviderClazz())
+                .in(Singleton.class);
           } else {
-            binder.bind(value.getClazz()).annotatedWith(key.getAnnotation())
-                .toProvider(value.getProviderClazz()).in(Singleton.class);
+            binder.bind(value.getClazz())
+                .annotatedWith(key.getAnnotation())
+                .toProvider(value.getProviderClazz())
+                .in(Singleton.class);
           }
           break;
         }
         case ProviderInstance: {
           if (key.getAnnotation() == null) {
-            binder.bind(value.getClazz()).toProvider(value.getProviderInstance());
+            binder.bind(value.getClazz())
+                .toProvider(value.getProviderInstance());
           } else {
-            binder.bind(value.getClazz()).annotatedWith(key.getAnnotation())
+            binder.bind(value.getClazz())
+                .annotatedWith(key.getAnnotation())
                 .toProvider(value.getProviderInstance());
           }
           break;
         }
         case ProviderInstanceEager: {
           if (key.getAnnotation() == null) {
-            binder.bind(value.getClazz()).toProvider(value.getProviderInstance())
+            binder.bind(value.getClazz())
+                .toProvider(value.getProviderInstance())
                 .asEagerSingleton();
           } else {
-            binder.bind(value.getClazz()).annotatedWith(key.getAnnotation())
-                .toProvider(value.getProviderInstance()).asEagerSingleton();
+            binder.bind(value.getClazz())
+                .annotatedWith(key.getAnnotation())
+                .toProvider(value.getProviderInstance())
+                .asEagerSingleton();
           }
           break;
         }
         case ProviderInstanceSingleton: {
           if (key.getAnnotation() == null) {
-            binder.bind(value.getClazz()).toProvider(value.getProviderInstance())
+            binder.bind(value.getClazz())
+                .toProvider(value.getProviderInstance())
                 .in(Singleton.class);
           } else {
-            binder.bind(value.getClazz()).annotatedWith(key.getAnnotation())
-                .toProvider(value.getProviderInstance()).in(Singleton.class);
+            binder.bind(value.getClazz())
+                .annotatedWith(key.getAnnotation())
+                .toProvider(value.getProviderInstance())
+                .in(Singleton.class);
           }
           break;
         }
@@ -200,9 +238,9 @@ public final class GuiceInjectorService implements InjectorService {
     public <T> T getInstance(final Class<T> clazz) {
       Preconditions.checkNotNull(clazz, "clazz");
       try {
-        return this.underlyingInjector.getInstance(clazz);
-      } catch (final Exception exc) {
-        throw new RuntimeException("Instance of '" + clazz + "' cannot be created", exc);
+        return this.underlyingInjector.getInstance(Key.get(clazz));
+      } catch (final Throwable throwable) {
+        return Exceptions.throwExcUnchecked(throwable);
       }
     }
 
@@ -212,8 +250,8 @@ public final class GuiceInjectorService implements InjectorService {
       Preconditions.checkNotNull(annotation, "annotation");
       try {
         return this.underlyingInjector.getInstance(Key.get(clazz, annotation));
-      } catch (final Exception exc) {
-        throw new RuntimeException("Instance of '" + clazz + "' cannot be created", exc);
+      } catch (final Throwable throwable) {
+        return Exceptions.throwExcUnchecked(throwable);
       }
     }
 

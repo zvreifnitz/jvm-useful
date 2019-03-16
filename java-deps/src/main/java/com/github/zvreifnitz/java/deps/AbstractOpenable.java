@@ -25,14 +25,14 @@ import java.util.Objects;
 
 public abstract class AbstractOpenable implements Openable {
 
-  private final static String NotInit = "Openable is not initialised";
-  private final static String NotOpen = "Openable is not open";
+  private final static String NOT_INITIALISED = "Openable is not initialised";
+  private final static String NOT_OPEN = "Openable is not open";
 
   private final Openable[] dependencies;
   private final Map<Openable, Boolean> requesters;
   private final SelfOpenable self;
 
-  private boolean open;
+  private volatile boolean open;
   private boolean init;
 
   protected AbstractOpenable(final Openable... dependencies) {
@@ -140,7 +140,7 @@ public abstract class AbstractOpenable implements Openable {
 
   private synchronized void openSync(final Openable requester) {
     final Boolean existing = this.requesters.get(requester);
-    Preconditions.checkState(existing != null, NotInit);
+    Preconditions.checkState(existing != null, NOT_INITIALISED);
     if (Boolean.TRUE.equals(existing)) {
       return;
     }
@@ -181,8 +181,12 @@ public abstract class AbstractOpenable implements Openable {
     return this.requesters.values().stream().noneMatch(Boolean.TRUE::equals);
   }
 
+  protected final void checkOpen() {
+    Preconditions.checkState(this.open, NOT_OPEN);
+  }
+
   protected final void throwNotOpen() {
-    Preconditions.checkState(false, NotOpen);
+    Preconditions.checkState(false, NOT_OPEN);
   }
 
   protected final <T> void performInitBy(final T dependency) {

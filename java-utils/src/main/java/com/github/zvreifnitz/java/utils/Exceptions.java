@@ -40,4 +40,19 @@ public final class Exceptions {
     throw new RuntimeException(throwable);
   }
 
+  public static <R> R throwNullPointerException(final String paramName) {
+    throw new NullPointerException("Parameter '" + paramName + "' is null");
+  }
+
+  public static <R> R throwIllegalArgumentException(final String msg) {
+    throw new IllegalArgumentException(msg);
+  }
+
+  public static <R> R throwIllegalStateException(final String msg) {
+    throw new IllegalStateException(msg);
+  }
+
+  public static <R> R throwUnsupportedOperationException(final String opName) {
+    throw new UnsupportedOperationException("Operation '" + opName + "' not supported");
+  }
 }
