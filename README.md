@@ -1,2 +1,3 @@
 # jvm-useful
-boilerplate stuff
+
+boilerplate stuff that might come handy

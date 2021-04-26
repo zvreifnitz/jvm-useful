@@ -1,5 +1,6 @@
 # target dir
 target/
+out/
 
 # idea stuff
 *idea*/
@@ -10,6 +11,9 @@ target/
 
 # Log file
 *.log
+
+# Tmp file
+*.tmp
 
 # BlueJ files
 *.ctxt
